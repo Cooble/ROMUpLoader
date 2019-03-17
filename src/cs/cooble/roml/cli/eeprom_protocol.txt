@@ -1,0 +1,79 @@
+EEPROM PROTOCOL
+This protocol is used to communicate with flasher via Serial Interface
+to flash content to eeprom and then read from it and validate it.
+
+
+-> Note everyOutcomming package (sent to Flasher) must start with 'o' and end with 'p'
+
+===GET EEPROM SIZE===
+    *ask flasher for eeprom size
+    's'
+
+    *flasher responds
+    's' + [size in decimal string]
+
+
+===READ ONE BYTE===
+    *ask flasher to send it value on this address
+    'r' + [MSB_ADDRESS] + [LSB_ADDRESS]
+
+    *flasher responds
+    'r' + [VALUE]
+
+
+===READ WHOLE MEMORY===
+    *ask flasher to send him contents of entire memory starting from address 0
+    't'
+
+    *flasher responds
+    'a'
+    't' + [VALUE[0]]
+    't' + [VALUE[1]]
+    't' + [VALUE[2]]
+    ...
+    'ty'
+
+
+===WRITE ONE BYTE===
+    *tell flasher to write byte into eeprom
+    'w' + [MSB_ADDRESS] + [LSB_ADDRESS] + [VALUE]
+
+    *flasher responds ready
+    'y'
+
+
+
+===WRITE WHOLE MEMORY===
+    *puts flasher into whole memory rewrite mode
+    "u"
+
+    *flasher responds ready
+    'y'
+
+    *tell flasher to write byte into eeprom
+    'w' + [VALUE[0]] 'w' + [VALUE[1]]...
+
+    *flasher responds ready or repeat
+    'y' / 'n'
+
+    ...
+
+    *tell flasher to write byte into eeprom
+    'w' + [VALUE[n]] 'w' + [VALUE[n+1]]
+
+    *flasher responds ready or failure
+    'y' / 'n'
+
+    ...
+
+
+===CLEAR WHOLE MEMORY===
+    *tell flasher to clear whole eeprom with '1'
+    *before this man has to set OE to 12V
+    "cccccc"
+
+    *flasher responds ready
+    'y'
+
+
+
